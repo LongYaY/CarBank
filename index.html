@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <!-- 引入 layui.css -->
-    <link href="//unpkg.com/layui@2.9.1/dist/css/layui.css" rel="stylesheet" />
+    <!-- <link href="//unpkg.com/layui@2.9.1/dist/css/layui.css" rel="stylesheet" /> -->
     <!-- 引入 layui.js -->
-    <script src="//unpkg.com/layui@2.9.1/dist/layui.js"></script>
+    <!-- <script src="//unpkg.com/layui@2.9.1/dist/layui.js"></script> -->
     <!-- 最新版本的 jQuery -->
     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.js"></script>
   </head>
@@ -31,6 +31,21 @@
       border-collapse: collapse;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
+    table button {
+      width: 60px;
+      height: 35px;
+      background-color: #ff5722;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+    table button:last-child {
+      background-color: #a233c6;
+    }
+    table button:nth-child(2) {
+      background-color: #ffb800;
+    }
+
     th {
       background-color: #f2f2f2;
     }
@@ -56,10 +71,20 @@
     }
     #searchBtn {
       width: 80px;
+      height: 40px;
+      background-color: #1e9fff;
+      color: white;
+      border: none;
+      border-radius: 4px;
       margin: -2px 0 0 10px;
     }
     #addList {
       width: 80px;
+      height: 40px;
+      background-color: #16b777;
+      color: white;
+      border: none;
+      border-radius: 4px;
       margin: -2px 0 0 10px;
     }
     #mask {
@@ -73,7 +98,7 @@
     }
     #addMask {
       width: 360px;
-      height: 480px;
+      height: 550px;
       padding: 20px;
       background-color: white;
       margin: 100px auto;
@@ -91,6 +116,12 @@
       margin-bottom: 10px;
     }
     #addMask button {
+      width: 80px;
+      height: 40px;
+      background-color: #16b777;
+      color: white;
+      border: none;
+      border-radius: 4px;
       margin: 20px 0 0 60px;
     }
     #modify {
@@ -104,7 +135,7 @@
     }
     #modifyMask {
       width: 360px;
-      height: 480px;
+      height: 550px;
       padding: 20px;
       background-color: white;
       margin: 100px auto;
@@ -122,6 +153,12 @@
       margin-bottom: 10px;
     }
     #modifyMask button {
+      width: 80px;
+      height: 40px;
+      background-color: #ffb800;
+      color: white;
+      border: none;
+      border-radius: 4px;
       margin: 20px 0 0 60px;
     }
     #view {
@@ -135,7 +172,7 @@
     }
     #viewMask {
       width: 360px;
-      height: 480px;
+      height: 550px;
       padding: 20px;
       background-color: white;
       margin: 100px auto;
@@ -153,6 +190,12 @@
       margin-bottom: 10px;
     }
     #viewMask button {
+      width: 80px;
+      height: 40px;
+      background-color: #a233c6;
+      color: white;
+      border: none;
+      border-radius: 4px;
       margin: 15px 0 0 145px;
     }
   </style>
@@ -246,14 +289,103 @@
       </div>
     </div>
     <script>
+      let page = 1,
+        size = 5;
       $(function () {
         runder();
+        $("tbody").on("click", tbodyFun);
+        $("#defineAdd").on("click", defineAddFun);
+        $("#addList").on("click", function () {
+          $("#mask").show();
+        });
+        $("#offView").on("click", function () {
+          $("#view").hide();
+        });
       });
+      $("#offAdd").click(function () {
+        $("#mask").hide();
+      });
+      $("#offModify").click(function () {
+        $("#modify").hide();
+      });
+      function defineAddFun() {
+        let obj = {
+          idcard: $("#id").val(),
+          brand: $("#name").val(),
+          model: $("#model").val(),
+          year: $("#year").val(),
+          color: $("#color").val(),
+          thumbnail: $("#img").val(),
+        };
+        $.ajax({
+          type: "POST",
+          url: "http://localhost:3000/api/car",
+          data: obj,
+          success: function (res) {
+            $("#mask").hide();
+            runder();
+          },
+        });
+      }
+      function tbodyFun() {
+        if (
+          event.target.tagName == "BUTTON" &&
+          event.target.innerHTML == "删除"
+        ) {
+          id = event.target.dataset.id;
+          $.ajax({
+            type: "get",
+            url: "http://localhost:3000/api/del?id=" + id,
+            success: function (res) {
+              console.log(res);
+              runder();
+            },
+          });
+        }
+        if (
+          event.target.tagName == "BUTTON" &&
+          event.target.innerHTML == "修改"
+        ) {
+          $("#modify").show();
+          id = event.target.dataset.id;
+          $.ajax({
+            type: "PUT",
+            url: "http://localhost:3000/api/car/idcard=" + id,
+            success: function (res) {
+              // $("#ids").val(res.idcard),
+              //   $("#names").val(res.brand),
+              //   $("#models").val(res.model),
+              //   $("#years").val(res.year),
+              //   $("#colors").val(res.color),
+              //   $("#imgs").val(res.thumbnail);
+            },
+          });
+        }
+        if (
+          event.target.tagName == "BUTTON" &&
+          event.target.innerHTML == "查看"
+        ) {
+          $("#view").show();
+          // id = event.target.dataset.id;
+          // $.ajax({
+          //   type: "GET",
+          //   url: "http://localhost:3000/api/details?id=" + id,
+          //   success: function (res) {
+          //     $("#idr").val(res.idcard),
+          //       $("#namer").val(res.brand),
+          //       $("#modelr").val(res.model),
+          //       $("#yearr").val(res.year),
+          //       $("#colorr").val(res.color),
+          //       $("#imgr").val(res.thumbnail);
+          //   },
+          // });
+        }
+      }
       function runder() {
         let html = "";
         $.ajax({
           type: "GET",
-          url: "http://localhost:3000/api/car",
+          url: `http://localhost:3000/api/car?page=${page}&size=${size}`,
           success: function (res) {
             let arr = res.data;
             arr.forEach((item, index) => {
@@ -265,7 +397,7 @@
                            <td>${item.color}</td>
                            <td><img src="${item.thumbnail}" alt=""></td>
                            <td><button type="button" class="layui-btn layui-bg-red"data-id=${item.idcard}>删除</button>
-                            <button type="button" class="layui-btn layui-bg-orange">修改</button>
+                            <button type="button" class="layui-btn layui-bg-orange"data-id=${item.idcard}>修改</button>
                             <button type="button" class="layui-btn layui-bg-purple" data-id=${item.idcard}>查看</button>
                            </td>
                         </tr>`;

@@ -78,6 +78,27 @@ const caredit = (req, res) => {
     msg: "ok",
   });
 };
+
+// const cardel = (req, res) => {
+//   let id = req.params.idcard;
+//   let data = req.body;
+//   let index = data.list.findIndex((item) => item.idcard == id);
+//   if (index == -1) {
+//     res.statusCode = 200;
+//     res.end(JSON.stringify({ msg: "未找到数据" }));
+//   }
+//   data.list.splice(index, 1);
+//   let dataStr = JSON.stringify(data);
+//   // console.log(dataStr);
+//   fs.writeFile(path.join(__dirname, "../data/car.json"), dataStr, (err) => {
+//     if (err) {
+//       res.statusCode = 404;
+//       res.end(JSON.stringify({ msg: "删除失败" }));
+//     }
+//     res.statusCode = 200;
+//     res.end(JSON.stringify({ msg: "删除成功" }));
+//   });
+// };
 //写入数据
 const wirteDate = (data) => {
   fs.writeFileSync(file, JSON.stringify({ list: data }));
@@ -87,4 +108,5 @@ module.exports = {
   carlist,
   caradd,
   caredit,
+  // cardel,
 };
